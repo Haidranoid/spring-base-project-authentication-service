@@ -1,0 +1,175 @@
+package com.springbaseproject.authenticationservice.services.impl;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springbaseproject.authenticationservice.dtos.AuthAccountDto;
+import com.springbaseproject.authenticationservice.dtos.AuthResponseDto;
+import com.springbaseproject.authenticationservice.dtos.LoginDto;
+import com.springbaseproject.authenticationservice.dtos.SignupDto;
+import com.springbaseproject.authenticationservice.exceptions.UnauthorizedException;
+import com.springbaseproject.authenticationservice.mappers.impl.AuthMapperImpl;
+import com.springbaseproject.authenticationservice.properties.Endpoints;
+import com.springbaseproject.authenticationservice.repositories.TokenRepository;
+import com.springbaseproject.authenticationservice.services.AuthenticationService;
+import com.springbaseproject.sharedstarter.constants.Permissions;
+import com.springbaseproject.sharedstarter.utils.SecurityUtils;
+import com.springbaseproject.sharedstarter.constants.TokenTypes;
+import com.springbaseproject.sharedstarter.entities.Token;
+import com.springbaseproject.sharedstarter.services.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
+import java.util.*;
+
+@Service
+@RequiredArgsConstructor
+public class AuthenticationServiceImpl implements AuthenticationService {
+
+    private final JwtService jwtService;
+    private final RestTemplate restTemplate;
+    private final Endpoints endpoints;
+    private final SecurityUtils securityUtils;
+    private final TokenRepository tokenRepository;
+    private final AuthMapperImpl authMapper;
+
+    public static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
+
+
+    @Override
+    public AuthAccountDto me() {
+        var account = securityUtils.getCurrentAccount();
+
+        if (account == null) {
+            throw new UnauthorizedException();
+        }
+
+        return authMapper.toAuthAccountDto(account);
+    }
+
+
+    @Override
+    public AuthResponseDto login(LoginDto loginDto) {
+
+        var accountAuthenticated = restTemplate.postForObject(
+                endpoints.accountServiceEndpoint() + "/authenticate-login",
+                loginDto,
+                AuthAccountDto.class
+        );
+
+        if (accountAuthenticated == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid username or password");
+        }
+
+        var roles = List.of(accountAuthenticated.role().name());
+        var scopes = accountAuthenticated.role().getPermissions().stream().map(Permissions::getPermission).toList();
+
+        var accessToken = jwtService.generateAccessToken(accountAuthenticated.username(), roles, scopes);
+        var refreshToken = jwtService.generateRefreshToken(accountAuthenticated.username());
+
+        return authMapper.toAuthResponseDto(accountAuthenticated, accessToken, refreshToken);
+    }
+
+    @Override
+    public AuthResponseDto signup(SignupDto signupDto) {
+
+        var accountCreated = restTemplate.postForObject(
+                endpoints.accountServiceEndpoint(),
+                signupDto,
+                AuthAccountDto.class
+        );
+
+        if (accountCreated == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request body");
+        }
+
+        var accessToken = jwtService.generateAccessToken(accountCreated.username());
+        var refreshToken = jwtService.generateRefreshToken(accountCreated.username());
+
+        saveAccountToken(accountCreated.id(), accessToken);
+
+        return authMapper.toAuthResponseDto(accountCreated, accessToken, refreshToken);
+    }
+
+    private void saveAccountToken(Long accountId, String jwtToken) {
+        var token = Token.builder()
+                .accountId(accountId)
+                .token(jwtToken)
+                .tokenType(TokenTypes.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+
+        tokenRepository.save(token);
+    }
+
+    private void revokeAllAccountTokensById(Long accountId) {
+        var validUserTokens = tokenRepository.findAllValidTokensByAccountId(accountId);
+
+        if (validUserTokens.isEmpty()) {
+            return;
+        }
+
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+
+        tokenRepository.saveAll(validUserTokens);
+    }
+    // ============================================================================== //
+
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+
+        final String refreshToken = authHeader.split(" ")[1].trim();
+        if (jwtService.isExpired(refreshToken)) {
+            return;
+        }
+
+        final String username = jwtService.decode(refreshToken).getSubject();
+        if (username == null) {
+            return;
+        }
+
+        // var dbAccount = accountHttpClient.find(username);
+
+        var account = restTemplate.getForObject(
+                endpoints.accountServiceEndpoint() + "/" + username,
+                AuthAccountDto.class
+        );
+
+        if (account == null) {
+            return;
+        }
+
+        if (!(username.equals(account.username()))) {
+            return;
+        }
+
+        var accessToken = jwtService.generateAccessToken(account.username());
+
+        revokeAllAccountTokensById(account.id());
+        saveAccountToken(account.id(), accessToken);
+
+        var refreshTokenRequestResponse = AuthResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .account(account)
+                .build();
+
+        new ObjectMapper().writeValue(response.getOutputStream(), refreshTokenRequestResponse);
+    }
+
+}
