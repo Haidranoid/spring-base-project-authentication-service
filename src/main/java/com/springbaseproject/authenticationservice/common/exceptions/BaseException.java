@@ -1,4 +1,4 @@
-package com.springbaseproject.authenticationservice.exceptions;
+package com.springbaseproject.authenticationservice.common.exceptions;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

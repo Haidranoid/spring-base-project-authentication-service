@@ -1,13 +1,13 @@
 package com.springbaseproject.authenticationservice.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springbaseproject.authenticationservice.dtos.AuthAccountDto;
-import com.springbaseproject.authenticationservice.dtos.AuthResponseDto;
-import com.springbaseproject.authenticationservice.dtos.LoginDto;
-import com.springbaseproject.authenticationservice.dtos.SignupDto;
-import com.springbaseproject.authenticationservice.exceptions.UnauthorizedException;
-import com.springbaseproject.authenticationservice.mappers.impl.AuthMapperImpl;
-import com.springbaseproject.authenticationservice.properties.Endpoints;
+import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
+import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
+import com.springbaseproject.authenticationservice.common.dtos.LoginDto;
+import com.springbaseproject.authenticationservice.common.dtos.SignupDto;
+import com.springbaseproject.authenticationservice.common.exceptions.UnauthorizedException;
+import com.springbaseproject.authenticationservice.common.mappers.impl.AuthMapperImpl;
+import com.springbaseproject.authenticationservice.common.properties.Endpoints;
 import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import com.springbaseproject.authenticationservice.services.AuthenticationService;
 import com.springbaseproject.sharedstarter.constants.Permissions;
@@ -18,8 +18,7 @@ import com.springbaseproject.sharedstarter.services.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -39,9 +39,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final SecurityUtils securityUtils;
     private final TokenRepository tokenRepository;
     private final AuthMapperImpl authMapper;
-
-    public static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
-
 
     @Override
     public AuthAccountDto me() {

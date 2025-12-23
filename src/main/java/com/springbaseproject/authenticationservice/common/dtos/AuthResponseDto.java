@@ -1,4 +1,4 @@
-package com.springbaseproject.authenticationservice.dtos;
+package com.springbaseproject.authenticationservice.common.dtos;
 
 import lombok.Builder;
 import lombok.NonNull;

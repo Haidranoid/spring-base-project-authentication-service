@@ -1,8 +1,8 @@
-package com.springbaseproject.authenticationservice.mappers.impl;
+package com.springbaseproject.authenticationservice.common.mappers.impl;
 
-import com.springbaseproject.authenticationservice.dtos.AuthAccountDto;
-import com.springbaseproject.authenticationservice.dtos.AuthResponseDto;
-import com.springbaseproject.authenticationservice.mappers.AccountMapper;
+import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
+import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
+import com.springbaseproject.authenticationservice.common.mappers.AccountMapper;
 import com.springbaseproject.sharedstarter.entities.Account;
 import org.springframework.stereotype.Component;
 

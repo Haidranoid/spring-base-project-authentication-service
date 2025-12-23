@@ -1,10 +1,10 @@
 package com.springbaseproject.authenticationservice.services;
 
 
-import com.springbaseproject.authenticationservice.dtos.AuthAccountDto;
-import com.springbaseproject.authenticationservice.dtos.AuthResponseDto;
-import com.springbaseproject.authenticationservice.dtos.LoginDto;
-import com.springbaseproject.authenticationservice.dtos.SignupDto;
+import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
+import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
+import com.springbaseproject.authenticationservice.common.dtos.LoginDto;
+import com.springbaseproject.authenticationservice.common.dtos.SignupDto;
 
 public interface AuthenticationService {
     AuthAccountDto me();

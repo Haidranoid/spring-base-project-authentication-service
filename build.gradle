@@ -1,7 +1,9 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.8'
+    id 'org.springframework.boot' version '3.5.9'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'maven-publish'
+    id 'io.freefair.lombok' version "9.1.0"
 }
 
 group = 'com.spring-base-project'
@@ -21,8 +23,8 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.8"
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.0"
+        mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.9"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.1"
     }
 }
 
@@ -31,25 +33,18 @@ dependencies {
     implementation 'com.spring-base-project:shared-starter:0.0.1'
     // Web dependencies
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    //implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.springframework:spring-webflux:6.2.15'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework:spring-webflux'
     // Security dependencies
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.security:spring-security-oauth2-jose'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-
     // Cloud config dependency
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     // Database dependencies
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.postgresql:postgresql'
-    // Lombok dependencies
-    compileOnly 'org.projectlombok:lombok:1.18.34'
-    annotationProcessor 'org.projectlombok:lombok:1.18.34'
     // Docs dependencies
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
     // Test dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

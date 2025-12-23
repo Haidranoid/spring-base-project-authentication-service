@@ -1,6 +1,6 @@
 package com.springbaseproject.authenticationservice.configuration;
 
-import com.springbaseproject.authenticationservice.properties.Endpoints;
+import com.springbaseproject.authenticationservice.common.properties.Endpoints;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

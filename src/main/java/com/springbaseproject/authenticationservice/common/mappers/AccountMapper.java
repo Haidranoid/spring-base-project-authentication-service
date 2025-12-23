@@ -1,7 +1,7 @@
-package com.springbaseproject.authenticationservice.mappers;
+package com.springbaseproject.authenticationservice.common.mappers;
 
-import com.springbaseproject.authenticationservice.dtos.AuthAccountDto;
-import com.springbaseproject.authenticationservice.dtos.AuthResponseDto;
+import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
+import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
 import com.springbaseproject.sharedstarter.entities.Account;
 
 public interface AccountMapper {

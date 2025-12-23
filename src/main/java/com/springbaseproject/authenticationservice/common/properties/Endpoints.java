@@ -1,4 +1,4 @@
-package com.springbaseproject.authenticationservice.properties;
+package com.springbaseproject.authenticationservice.common.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
