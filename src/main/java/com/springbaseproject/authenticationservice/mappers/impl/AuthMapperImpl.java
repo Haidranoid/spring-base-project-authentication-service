@@ -1,13 +1,13 @@
-package com.springbaseproject.authenticationservice.common.mappers.impl;
+package com.springbaseproject.authenticationservice.mappers.impl;
 
 import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
 import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
-import com.springbaseproject.authenticationservice.common.mappers.AccountMapper;
+import com.springbaseproject.authenticationservice.mappers.AuthMapper;
 import com.springbaseproject.sharedstarter.entities.Account;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthMapperImpl implements AccountMapper {
+public class AuthMapperImpl implements AuthMapper {
 
     @Override
     public AuthAccountDto toAuthAccountDto(Account account) {
