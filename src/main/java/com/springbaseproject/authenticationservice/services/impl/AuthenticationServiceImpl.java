@@ -56,7 +56,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthResponseDto login(LoginDto loginDto) {
 
         var accountAuthenticated = restTemplate.postForObject(
-                endpoints.accountServiceEndpoint() + "/authenticate-login",
+                endpoints.accountServiceInternalEndpoint() + "/authenticate-login",
                 loginDto,
                 AuthAccountDto.class
         );
@@ -78,7 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthResponseDto signup(SignupDto signupDto) {
 
         var accountCreated = restTemplate.postForObject(
-                endpoints.accountServiceEndpoint(),
+                endpoints.accountServiceInternalEndpoint(),
                 signupDto,
                 AuthAccountDto.class
         );

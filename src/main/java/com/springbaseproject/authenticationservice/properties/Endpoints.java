@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "application.endpoints")
 public record Endpoints(
-        String accountServiceEndpoint
-) {
-}
+        String accountServiceEndpoint,
+        String accountServiceInternalEndpoint
+) {}

@@ -1,4 +1,4 @@
-package com.springbaseproject.authenticationservice.controllers.publics.advices;
+package com.springbaseproject.authenticationservice.controllers.advices;
 
 import com.springbaseproject.authenticationservice.common.exceptions.*;
 import com.springbaseproject.authenticationservice.common.errors.*;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
-@RestControllerAdvice(basePackages = "com.springbaseproject.authenticationservice.controllers.publics")
+//@RestControllerAdvice(basePackages = "com.springbaseproject.authenticationservice.controllers.publics")
 public class AuthenticationExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)

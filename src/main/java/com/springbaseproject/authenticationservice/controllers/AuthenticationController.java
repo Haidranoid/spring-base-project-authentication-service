@@ -1,4 +1,4 @@
-package com.springbaseproject.authenticationservice.controllers.publics;
+package com.springbaseproject.authenticationservice.controllers;
 
 import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
 import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;

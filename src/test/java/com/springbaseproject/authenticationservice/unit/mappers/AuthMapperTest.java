@@ -3,7 +3,7 @@ package com.springbaseproject.authenticationservice.unit.mappers;
 import com.springbaseproject.authenticationservice.mappers.AuthMapper;
 import com.springbaseproject.authenticationservice.mappers.impl.AuthMapperImpl;
 import com.springbaseproject.sharedstarter.constants.Roles;
-import com.springbaseproject.sharedstarter.entities.Account;
+import com.springbaseproject.sharedstarter.entities.AccountEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
