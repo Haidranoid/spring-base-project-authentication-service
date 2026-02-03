@@ -1,6 +1,6 @@
 package com.springbaseproject.authenticationservice.data.repositories;
 
-import com.springbaseproject.authenticationservice.fixtures.AuthenticationFixtures;
+import com.springbaseproject.authenticationservice.fixtures.AuthenticationEntityFixtures;
 import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+//TODO
 @DataJpaTest
 public class TokenRepositoryTest {
 
@@ -16,7 +17,7 @@ public class TokenRepositoryTest {
 
     @Test
     void save_shouldPersistEntity(){
-        var token = AuthenticationFixtures.accessToken();
+        var token = AuthenticationEntityFixtures.accessToken();
         tokenRepository.save(token);
 
         var tokens = tokenRepository.findAll();

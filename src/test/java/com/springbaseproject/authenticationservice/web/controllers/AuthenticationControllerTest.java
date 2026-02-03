@@ -1,5 +1,6 @@
 package com.springbaseproject.authenticationservice.web.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springbaseproject.authenticationservice.controllers.advices.GlobalExceptionHandler;
 import com.springbaseproject.authenticationservice.controllers.AuthenticationController;
 import com.springbaseproject.authenticationservice.controllers.advices.AuthenticationExceptionHandler;
@@ -24,12 +25,14 @@ public class AuthenticationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private AuthenticationServiceImpl authenticationService;
 
     @Test
-    @DisplayName("GET /accounts/{id} returns 200 when account exists")
-    public void getAccountById_whenExists_shouldReturn200() {
+    @DisplayName("POST /api/v1/auth/signup returns 200 when account is created")
+    public void signup_whenExists_shouldReturn200() {
     }
 }

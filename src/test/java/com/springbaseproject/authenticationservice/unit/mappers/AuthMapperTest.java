@@ -13,6 +13,10 @@ public class AuthMapperTest {
     private final AuthMapper mapper = new AuthMapperImpl();
 
     @Test
-    void toDto_shouldMapAllFields() {
+    void toAuthAccountDto_shouldMapAllFields() {
+    }
+
+    @Test
+    void toAuthResponseDto_shouldMapAllFields() {
     }
 }

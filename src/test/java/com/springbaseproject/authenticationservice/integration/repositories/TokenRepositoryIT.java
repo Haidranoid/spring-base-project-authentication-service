@@ -1,7 +1,7 @@
 package com.springbaseproject.authenticationservice.integration.repositories;
 
-import com.springbaseproject.authenticationservice.fixtures.AuthenticationFixtures;
-import com.springbaseproject.authenticationservice.integration.base.AbstractPostgresIT;
+import com.springbaseproject.authenticationservice.fixtures.AuthenticationEntityFixtures;
+import com.springbaseproject.authenticationservice.containers.base.AbstractPostgresIT;
 import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,9 @@ public class TokenRepositoryIT extends AbstractPostgresIT {
     @Autowired
     TokenRepository tokenRepository;
 
-    @Test
+    //@Test
     void save_shouldPersistEntity(){
-        var token = AuthenticationFixtures.accessToken();
+        var token = AuthenticationEntityFixtures.accessToken();
         tokenRepository.save(token);
 
         var tokens = tokenRepository.findAll();

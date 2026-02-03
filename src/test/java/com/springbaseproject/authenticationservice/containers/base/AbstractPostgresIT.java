@@ -1,4 +1,4 @@
-package com.springbaseproject.authenticationservice.integration.base;
+package com.springbaseproject.authenticationservice.containers.base;
 
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;

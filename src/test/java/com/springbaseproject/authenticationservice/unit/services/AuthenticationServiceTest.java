@@ -1,6 +1,7 @@
 package com.springbaseproject.authenticationservice.unit.services;
 
 import com.springbaseproject.authenticationservice.mappers.AuthMapper;
+import com.springbaseproject.authenticationservice.mappers.impl.AuthMapperImpl;
 import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import com.springbaseproject.authenticationservice.services.impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -13,14 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class AuthenticationServiceTest {
     @Mock
     private TokenRepository tokenRepository;
-
     @Mock
-    private AuthMapper authMapper;
+    private AuthMapperImpl authMapper;
 
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
 
     @Test
-    public void whenUserRepository_findAll_shouldReturnEmptyList() {
+    public void login_whenCredentialsAreValid_shouldReturnAccount() {
     }
 }
