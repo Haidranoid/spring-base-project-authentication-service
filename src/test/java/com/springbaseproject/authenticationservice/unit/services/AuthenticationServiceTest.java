@@ -159,6 +159,19 @@ class AuthenticationServiceTest {
 
     @Test
     public void signup_whenUserIsDuplicated_shouldThrowException() {
+        var signupDto = AuthenticationDtoFixtures.managerSignupDto();
+
+        when(restTemplate.postForObject(
+                endpoints.accountServiceInternalEndpoint(),
+                signupDto,
+                AuthAccountDto.class)
+        ).thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request body"));
+
+        var exception = assertThrows(ResponseStatusException.class,
+                () -> authenticationService.signup(signupDto));
+
+        assertEquals("400 BAD_REQUEST \"Invalid request body\"", exception.getMessage());
+
     }
 
     @Test
