@@ -60,10 +60,12 @@ public class AuthenticationController {
         return signupResponse;
     }
 
+    /*
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "bearerAuth")
     public void authenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authenticationService.refreshToken(request, response);
     }
+    */
 }

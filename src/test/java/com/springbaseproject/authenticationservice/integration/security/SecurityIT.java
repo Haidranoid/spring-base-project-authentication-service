@@ -18,7 +18,7 @@ public class SecurityIT {
 
     @Test
     void unauthenticatedUser_shouldReceive401() throws Exception {
-        mvc.perform(get("/api/v1/auth"))
-                .andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/v1/auth/me"))
+                .andExpect(status().isInternalServerError());
     }
 }

@@ -5,11 +5,12 @@ import com.springbaseproject.authenticationservice.common.exceptions.Unauthorize
 import com.springbaseproject.authenticationservice.fixtures.AuthenticationDtoFixtures;
 import com.springbaseproject.authenticationservice.fixtures.AuthenticationEntityFixtures;
 import com.springbaseproject.authenticationservice.mappers.impl.AuthMapperImpl;
-import com.springbaseproject.authenticationservice.properties.Endpoints;
+import com.springbaseproject.authenticationservice.common.properties.Endpoints;
 import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import com.springbaseproject.authenticationservice.services.impl.AuthenticationServiceImpl;
 import com.springbaseproject.sharedstarter.constants.Permissions;
 import com.springbaseproject.sharedstarter.constants.Roles;
+import com.springbaseproject.sharedstarter.constants.TokenTypes;
 import com.springbaseproject.sharedstarter.services.JwtService;
 import com.springbaseproject.sharedstarter.utils.SecurityUtils;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -47,7 +50,7 @@ class AuthenticationServiceTest {
     private AuthenticationServiceImpl authenticationService;
 
     @Test
-    public void me_whenThereIsASession_shouldReturnAuthAccountDto() {
+    void me_whenThereIsASession_shouldReturnAuthAccountDto() {
         var currentSession = AuthenticationEntityFixtures.currentSession();
         var authAccountDto = AuthenticationDtoFixtures.authAccountDto(1L);
 
@@ -66,7 +69,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void me_whenThereIsNotASession_shouldThrowException() {
+    void me_whenThereIsNotASession_shouldThrowException() {
         when(securityUtils.getCurrentAccount())
                 .thenReturn(null);
 
@@ -77,7 +80,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void login_whenCredentialsAreValid_shouldReturnAuthResponseDto() {
+    void login_whenCredentialsAreValid_shouldReturnAuthResponseDto() {
         var loginDto = AuthenticationDtoFixtures.loginWithUsernameAndPassword();
         var accountAuthenticated = AuthenticationDtoFixtures.loginAuthAccountDto(1L);
         var accessToken = AuthenticationDtoFixtures.randomAccessToken();
@@ -111,7 +114,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void login_whenCredentialsAreInvalid_shouldThrowException() {
+    void login_whenCredentialsAreInvalid_shouldThrowException() {
         var loginDto = AuthenticationDtoFixtures.loginWithUsernameAndPassword();
 
         when(restTemplate.postForObject(
@@ -127,7 +130,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void signup_whenUserIsNotDuplicated_shouldReturnAuthResponseDto() {
+    void signup_whenUserIsNotDuplicated_shouldReturnAuthResponseDto() {
         var signupDto = AuthenticationDtoFixtures.managerSignupDto();
         var accountCreated = AuthenticationDtoFixtures.signupAuthAccountDto(1L);
         var accessToken = AuthenticationDtoFixtures.randomAccessToken();
@@ -150,15 +153,50 @@ class AuthenticationServiceTest {
         when(authMapper.toAuthResponseDto(accountCreated, accessToken, refreshToken))
                 .thenReturn(authResponseDto);
 
-        var account = authenticationService.signup(signupDto);
+        var authResponse = authenticationService.signup(signupDto);
 
-        assertEquals(accessToken, account.accessToken());
-        assertEquals(refreshToken, account.refreshToken());
-        assertEquals(signupDto.username(), account.account().username());
+        assertEquals(accessToken, authResponse.accessToken());
+        assertEquals(refreshToken, authResponse.refreshToken());
+        assertEquals(signupDto.username(), authResponse.account().username());
     }
 
     @Test
-    public void signup_whenUserIsDuplicated_shouldThrowException() {
+    void signup_whenUserIsNotDuplicated_shouldSaveAccountToken() {
+        var signupDto = AuthenticationDtoFixtures.managerSignupDto();
+        var accountCreated = AuthenticationDtoFixtures.signupAuthAccountDto(1L);
+        var accessToken = AuthenticationDtoFixtures.randomAccessToken();
+        var refreshToken = AuthenticationDtoFixtures.randomRefreshToken();
+        var authResponseDto = AuthenticationDtoFixtures.signupAuthResponseDto(1L);
+
+        when(restTemplate.postForObject(
+                endpoints.accountServiceInternalEndpoint(),
+                signupDto,
+                AuthAccountDto.class)
+        ).thenReturn(accountCreated);
+
+
+        when(jwtService.generateAccessToken(accountCreated.username()))
+                .thenReturn(accessToken);
+
+        when(jwtService.generateRefreshToken(accountCreated.username()))
+                .thenReturn(refreshToken);
+
+        when(authMapper.toAuthResponseDto(accountCreated, accessToken, refreshToken))
+                .thenReturn(authResponseDto);
+
+        authenticationService.signup(signupDto);
+
+        verify(tokenRepository).save(argThat(tokenEntity ->
+                        tokenEntity.getAccountId().equals(accountCreated.id())
+                        && tokenEntity.getToken().equals(accessToken)
+                        && tokenEntity.getTokenType().equals(TokenTypes.BEARER)
+                        && !tokenEntity.isExpired()
+                        && !tokenEntity.isRevoked()
+                ));
+    }
+
+    @Test
+    void signup_whenUserIsDuplicated_shouldThrowException() {
         var signupDto = AuthenticationDtoFixtures.managerSignupDto();
 
         when(restTemplate.postForObject(
@@ -174,15 +212,20 @@ class AuthenticationServiceTest {
 
     }
 
+    /*
     @Test
-    public void saveAccountToken_whenSignupWasSuccessful_shouldPersistTheToken() {
+    void refreshToken_whenRefreshTokenIsValid_shouldReturnAuthResponseDto() {
+        //TODO
     }
 
     @Test
-    public void revokeAllAccountTokensById_whenRefreshTokenWasSuccessful_shouldRevokeAllPreviousTokens() {
+    void refreshToken_whenRefreshTokenIsValid_shouldRevokePreviousTokens() {
+        //TODO
     }
 
     @Test
-    public void refreshToken_whenAccessTokenIsExpired_shouldReturnAuthResponseDto() {
+    void refreshToken_whenRefreshTokenIsExpired_shouldDoNothing() {
+        //TODO
     }
+    */
 }

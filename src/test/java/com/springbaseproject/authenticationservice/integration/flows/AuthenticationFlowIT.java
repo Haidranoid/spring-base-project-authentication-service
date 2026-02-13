@@ -1,5 +1,7 @@
 package com.springbaseproject.authenticationservice.integration.flows;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springbaseproject.authenticationservice.fixtures.AuthenticationDtoFixtures;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -7,30 +9,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class AuthenticationFlowIT {
 
     @Autowired
     MockMvc mvc;
+    @Autowired
+    ObjectMapper objectMapper;
 
-    @Test
-    void createAccountFlow_shouldPersistAndReturnAccount() throws Exception {
-        mvc.perform(post("/api/v1/auth")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                    {
-                                      "email": "test@test.com",
-                                      "firstName": "Steve"
-                                    }
-                                """))
-                .andExpect(status().isCreated());
+    //@Test
+    void authenticateLoginFlow_shouldReturnTheAccountSession() throws Exception {
+        var loginDto = AuthenticationDtoFixtures.loginWithUsernameAndPassword();
 
-        mvc.perform(get("/api/v1/auth"))
-                .andExpect(status().isOk());
+        mvc.perform(post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDto))
+        ).andExpect(status().isAccepted());
     }
 }

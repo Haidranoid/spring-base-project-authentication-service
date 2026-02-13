@@ -1,32 +1,27 @@
 package com.springbaseproject.authenticationservice.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
 import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
 import com.springbaseproject.authenticationservice.common.dtos.LoginDto;
 import com.springbaseproject.authenticationservice.common.dtos.SignupDto;
 import com.springbaseproject.authenticationservice.common.exceptions.UnauthorizedException;
 import com.springbaseproject.authenticationservice.mappers.impl.AuthMapperImpl;
-import com.springbaseproject.authenticationservice.properties.Endpoints;
+import com.springbaseproject.authenticationservice.common.properties.Endpoints;
 import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import com.springbaseproject.authenticationservice.services.AuthenticationService;
 import com.springbaseproject.sharedstarter.constants.Permissions;
 import com.springbaseproject.sharedstarter.utils.SecurityUtils;
 import com.springbaseproject.sharedstarter.constants.TokenTypes;
-import com.springbaseproject.sharedstarter.entities.Token;
+import com.springbaseproject.sharedstarter.entities.TokenEntity;
 import com.springbaseproject.sharedstarter.services.JwtService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.*;
 
 @Slf4j
@@ -96,34 +91,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return authMapper.toAuthResponseDto(accountCreated, accessToken, refreshToken);
     }
 
-    private void saveAccountToken(Long accountId, String jwtToken) {
-        var token = Token.builder()
-                .accountId(accountId)
-                .token(jwtToken)
-                .tokenType(TokenTypes.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
-
-        tokenRepository.save(token);
-    }
-
-    private void revokeAllAccountTokensById(Long accountId) {
-        var validUserTokens = tokenRepository.findAllValidTokensByAccountId(accountId);
-
-        if (validUserTokens.isEmpty()) {
-            return;
-        }
-
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-
-        tokenRepository.saveAll(validUserTokens);
-    }
-    // ============================================================================== //
-
+    /*
+    @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -170,4 +139,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         new ObjectMapper().writeValue(response.getOutputStream(), refreshTokenRequestResponse);
     }
 
+    */
+
+    private void saveAccountToken(Long accountId, String jwtToken) {
+        var token = TokenEntity.builder()
+                .accountId(accountId)
+                .token(jwtToken)
+                .tokenType(TokenTypes.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+
+        tokenRepository.save(token);
+    }
+
+    private void revokeAllAccountTokensById(Long accountId) {
+        var validUserTokens = tokenRepository.findAllValidTokensByAccountId(accountId);
+
+        if (validUserTokens.isEmpty()) {
+            return;
+        }
+
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+
+        tokenRepository.saveAll(validUserTokens);
+    }
 }

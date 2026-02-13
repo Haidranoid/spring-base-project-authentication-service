@@ -5,6 +5,8 @@ import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
 import com.springbaseproject.authenticationservice.common.dtos.LoginDto;
 import com.springbaseproject.authenticationservice.common.dtos.SignupDto;
 import com.springbaseproject.sharedstarter.constants.Roles;
+import com.springbaseproject.sharedstarter.constants.TokenTypes;
+import com.springbaseproject.sharedstarter.entities.TokenEntity;
 
 public class AuthenticationDtoFixtures {
 
@@ -38,6 +40,16 @@ public class AuthenticationDtoFixtures {
                 .lastName("Pascal")
                 .email("admin@email.com")
                 .role(Roles.MANAGER)
+                .build();
+    }
+
+    public static TokenEntity signupTokenPersisted(Long accountId, String jwtToken) {
+        return TokenEntity.builder()
+                .accountId(accountId)
+                .token(jwtToken)
+                .tokenType(TokenTypes.BEARER)
+                .expired(false)
+                .revoked(false)
                 .build();
     }
 

@@ -2,7 +2,7 @@ package com.springbaseproject.authenticationservice.fixtures;
 
 import com.springbaseproject.sharedstarter.constants.Roles;
 import com.springbaseproject.sharedstarter.entities.AccountEntity;
-import com.springbaseproject.sharedstarter.entities.Token;
+import com.springbaseproject.sharedstarter.entities.TokenEntity;
 
 public class AuthenticationEntityFixtures {
 
@@ -17,8 +17,8 @@ public class AuthenticationEntityFixtures {
                 .build();
     }
 
-    public static Token accessToken() {
-        return Token.builder()
+    public static TokenEntity accessToken() {
+        return TokenEntity.builder()
                 .build();
     }
 }

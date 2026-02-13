@@ -1,4 +1,4 @@
-package com.springbaseproject.authenticationservice.httpclients;
+package com.springbaseproject.authenticationservice.common.httpclients;
 
 import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
 import lombok.RequiredArgsConstructor;
