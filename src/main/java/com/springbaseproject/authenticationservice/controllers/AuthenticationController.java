@@ -26,18 +26,6 @@ public class AuthenticationController {
 
     private final AuthenticationServiceImpl authenticationService;
 
-    @GetMapping("/me")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @SecurityRequirement(name = "bearerAuth")
-    public AuthAccountDto getMe() {
-        log.info("getMe request started");
-
-        var currentSession = authenticationService.me();
-
-        log.info("getMe request response: {}", currentSession);
-        return currentSession;
-    }
-
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public AuthResponseDto login(@RequestBody LoginDto loginDto) {

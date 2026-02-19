@@ -38,17 +38,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthMapperImpl authMapper;
 
     @Override
-    public AuthAccountDto me() {
-        var account = securityUtils.getCurrentAccount();
-
-        if (account == null) {
-            throw new UnauthorizedException();
-        }
-
-        return authMapper.toAuthAccountDto(account);
-    }
-
-    @Override
     public AuthResponseDto login(LoginDto loginDto) {
 
         var accountAuthenticated = restTemplate.postForObject(
@@ -62,10 +51,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         var roles = List.of(accountAuthenticated.role().name());
-        var scopes = accountAuthenticated.role().getPermissions().stream().map(Permissions::getPermission).toList();
 
-        var accessToken = jwtService.generateAccessToken(accountAuthenticated.username(), roles, scopes);
-        var refreshToken = jwtService.generateRefreshToken(accountAuthenticated.username());
+        var scopes = accountAuthenticated.role()
+                .getPermissions()
+                .stream()
+                .map(Permissions::getPermission)
+                .toList();
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
+        claims.put("scope", String.join(" ", scopes));
+
+        var accessToken = jwtService.generateAccessToken(
+                accountAuthenticated.username(),
+                claims
+        );
+
+        var refreshToken = jwtService.generateRefreshToken(
+                accountAuthenticated.username()
+        );
 
         return authMapper.toAuthResponseDto(accountAuthenticated, accessToken, refreshToken);
     }

@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public interface AuthenticationService {
-    AuthAccountDto me();
+    //AuthAccountDto me();
     AuthResponseDto login(LoginDto loginDto);
     AuthResponseDto signup(SignupDto signupDto);
     //void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
