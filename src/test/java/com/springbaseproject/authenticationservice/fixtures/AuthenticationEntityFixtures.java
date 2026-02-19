@@ -17,6 +17,19 @@ public class AuthenticationEntityFixtures {
                 .build();
     }
 
+    public static AccountEntity adminAccountPersisted(Long id) {
+        return AccountEntity.builder()
+                .id(id)
+                .username("bugsbunny12")
+                .firstName("Bugs")
+                .lastName("Bunny")
+                .email("bunny@email.com")
+                .password("<password>")
+                .role(Roles.ADMIN)
+                .enabled(true)
+                .build();
+    }
+
     public static TokenEntity accessToken() {
         return TokenEntity.builder()
                 .build();

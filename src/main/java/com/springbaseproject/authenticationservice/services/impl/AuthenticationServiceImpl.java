@@ -153,6 +153,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tokenRepository.save(token);
     }
 
+    /*
     private void revokeAllAccountTokensById(Long accountId) {
         var validUserTokens = tokenRepository.findAllValidTokensByAccountId(accountId);
 
@@ -167,4 +168,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         tokenRepository.saveAll(validUserTokens);
     }
+
+     */
 }

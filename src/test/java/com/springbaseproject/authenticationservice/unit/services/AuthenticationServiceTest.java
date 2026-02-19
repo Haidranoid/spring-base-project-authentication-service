@@ -130,6 +130,22 @@ class AuthenticationServiceTest {
     }
 
     @Test
+    void login_whenAuthenticationReturnsNullValue_shouldThrowException() {
+        var loginDto = AuthenticationDtoFixtures.loginWithUsernameAndPassword();
+
+        when(restTemplate.postForObject(
+                endpoints.accountServiceInternalEndpoint() + "/authenticate-login",
+                loginDto,
+                AuthAccountDto.class)
+        ).thenReturn(null);
+
+        var exception = assertThrows(ResponseStatusException.class,
+                () -> authenticationService.login(loginDto));
+
+        assertEquals("400 BAD_REQUEST \"Invalid username or password\"", exception.getMessage());
+    }
+
+    @Test
     void signup_whenUserIsNotDuplicated_shouldReturnAuthResponseDto() {
         var signupDto = AuthenticationDtoFixtures.managerSignupDto();
         var accountCreated = AuthenticationDtoFixtures.signupAuthAccountDto(1L);
@@ -211,6 +227,23 @@ class AuthenticationServiceTest {
         assertEquals("400 BAD_REQUEST \"Invalid request body\"", exception.getMessage());
 
     }
+
+    @Test
+    void signup_whenAccountVerificationReturnsNullValue_shouldThrowException() {
+        var signupDto = AuthenticationDtoFixtures.managerSignupDto();
+
+        when(restTemplate.postForObject(
+                endpoints.accountServiceInternalEndpoint(),
+                signupDto,
+                AuthAccountDto.class)
+        ).thenReturn(null);
+
+        var exception = assertThrows(ResponseStatusException.class,
+                () -> authenticationService.signup(signupDto));
+
+        assertEquals("400 BAD_REQUEST \"Invalid request body\"", exception.getMessage());
+    }
+
 
     /*
     @Test

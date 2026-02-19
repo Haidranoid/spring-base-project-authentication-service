@@ -81,6 +81,17 @@ public class AuthenticationDtoFixtures {
         return "refresh-token-añsldfjañeifaisdfjalsdkjfasldfjasñldfkjasñldfkj";
     }
 
+    public static AuthAccountDto meAuthResponseDto(Long id) {
+        return AuthAccountDto.builder()
+                .id(id)
+                .username("ronald")
+                .email("ronald@email.com")
+                .firstName("Ronald")
+                .lastName("Flag")
+                .role(Roles.USER)
+                .build();
+    }
+
     public static AuthResponseDto loginAuthResponseDto(Long id) {
         return AuthResponseDto.builder()
                 .accessToken("access-token-añsldfjañeifaisdfjalsdkjfasldfjasñldfkjasñldfkj")
