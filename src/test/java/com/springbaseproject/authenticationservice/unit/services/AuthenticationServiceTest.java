@@ -2,6 +2,7 @@ package com.springbaseproject.authenticationservice.unit.services;
 
 import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
 import com.springbaseproject.authenticationservice.common.exceptions.UnauthorizedException;
+import com.springbaseproject.authenticationservice.common.utils.JwtSignerService;
 import com.springbaseproject.authenticationservice.fixtures.AuthenticationDtoFixtures;
 import com.springbaseproject.authenticationservice.fixtures.AuthenticationEntityFixtures;
 import com.springbaseproject.authenticationservice.mappers.impl.AuthMapperImpl;
@@ -11,8 +12,7 @@ import com.springbaseproject.authenticationservice.services.impl.AuthenticationS
 import com.springbaseproject.sharedstarter.constants.Permissions;
 import com.springbaseproject.sharedstarter.constants.Roles;
 import com.springbaseproject.sharedstarter.constants.TokenTypes;
-import com.springbaseproject.sharedstarter.services.JwtService;
-import com.springbaseproject.sharedstarter.utils.SecurityUtils;
+import com.springbaseproject.sharedstarter.security.JwtAuthenticationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,13 +34,13 @@ import static org.mockito.Mockito.when;
 class AuthenticationServiceTest {
 
     @Mock
-    private JwtService jwtService;
+    private JwtSignerService jwtSignerService;
     @Mock
     private RestTemplate restTemplate;
     @Mock
     private Endpoints endpoints;
     @Mock
-    private SecurityUtils securityUtils;
+    private JwtAuthenticationService jwtAuthenticationService;
     @Mock
     private TokenRepository tokenRepository;
     @Mock
@@ -54,7 +54,7 @@ class AuthenticationServiceTest {
         var currentSession = AuthenticationEntityFixtures.currentSession();
         var authAccountDto = AuthenticationDtoFixtures.authAccountDto(1L);
 
-        when(securityUtils.getCurrentAccount())
+        when(jwtAuthenticationService.getCurrentUsername())
                 .thenReturn(currentSession);
         when(authMapper.toAuthAccountDto(currentSession))
                 .thenReturn(authAccountDto);
@@ -97,10 +97,10 @@ class AuthenticationServiceTest {
         ).thenReturn(accountAuthenticated);
 
 
-        when(jwtService.generateAccessToken(accountAuthenticated.username(), roles, scopes))
+        when(jwtSignerService.generateAccessToken(accountAuthenticated.username(), roles, scopes))
                 .thenReturn(accessToken);
 
-        when(jwtService.generateRefreshToken(accountAuthenticated.username()))
+        when(jwtSignerService.generateRefreshToken(accountAuthenticated.username()))
                 .thenReturn(refreshToken);
 
         when(authMapper.toAuthResponseDto(accountAuthenticated, accessToken, refreshToken))
@@ -160,10 +160,10 @@ class AuthenticationServiceTest {
         ).thenReturn(accountCreated);
 
 
-        when(jwtService.generateAccessToken(accountCreated.username()))
+        when(jwtSignerService.generateAccessToken(accountCreated.username()))
                 .thenReturn(accessToken);
 
-        when(jwtService.generateRefreshToken(accountCreated.username()))
+        when(jwtSignerService.generateRefreshToken(accountCreated.username()))
                 .thenReturn(refreshToken);
 
         when(authMapper.toAuthResponseDto(accountCreated, accessToken, refreshToken))
@@ -191,10 +191,10 @@ class AuthenticationServiceTest {
         ).thenReturn(accountCreated);
 
 
-        when(jwtService.generateAccessToken(accountCreated.username()))
+        when(jwtSignerService.generateAccessToken(accountCreated.username()))
                 .thenReturn(accessToken);
 
-        when(jwtService.generateRefreshToken(accountCreated.username()))
+        when(jwtSignerService.generateRefreshToken(accountCreated.username()))
                 .thenReturn(refreshToken);
 
         when(authMapper.toAuthResponseDto(accountCreated, accessToken, refreshToken))

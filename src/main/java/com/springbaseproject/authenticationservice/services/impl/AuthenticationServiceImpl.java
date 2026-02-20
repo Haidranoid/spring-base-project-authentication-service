@@ -4,16 +4,15 @@ import com.springbaseproject.authenticationservice.common.dtos.AuthAccountDto;
 import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
 import com.springbaseproject.authenticationservice.common.dtos.LoginDto;
 import com.springbaseproject.authenticationservice.common.dtos.SignupDto;
-import com.springbaseproject.authenticationservice.common.exceptions.UnauthorizedException;
+import com.springbaseproject.authenticationservice.common.utils.JwtSignerService;
 import com.springbaseproject.authenticationservice.mappers.impl.AuthMapperImpl;
 import com.springbaseproject.authenticationservice.common.properties.Endpoints;
 import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import com.springbaseproject.authenticationservice.services.AuthenticationService;
 import com.springbaseproject.sharedstarter.constants.Permissions;
-import com.springbaseproject.sharedstarter.utils.SecurityUtils;
+import com.springbaseproject.sharedstarter.security.JwtAuthenticationService;
 import com.springbaseproject.sharedstarter.constants.TokenTypes;
 import com.springbaseproject.sharedstarter.entities.TokenEntity;
-import com.springbaseproject.sharedstarter.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,10 +29,10 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final JwtService jwtService;
+    private final JwtSignerService jwtSignerService;
     private final RestTemplate restTemplate;
     private final Endpoints endpoints;
-    private final SecurityUtils securityUtils;
+    private final JwtAuthenticationService jwtAuthenticationService;
     private final TokenRepository tokenRepository;
     private final AuthMapperImpl authMapper;
 
@@ -62,12 +61,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         claims.put("roles", roles);
         claims.put("scope", String.join(" ", scopes));
 
-        var accessToken = jwtService.generateAccessToken(
+        var accessToken = jwtSignerService.generateAccessToken(
                 accountAuthenticated.username(),
                 claims
         );
 
-        var refreshToken = jwtService.generateRefreshToken(
+        var refreshToken = jwtSignerService.generateRefreshToken(
                 accountAuthenticated.username()
         );
 
@@ -87,8 +86,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request body");
         }
 
-        var accessToken = jwtService.generateAccessToken(accountCreated.username());
-        var refreshToken = jwtService.generateRefreshToken(accountCreated.username());
+        var accessToken = jwtSignerService.generateAccessToken(accountCreated.username(), new HashMap<>());
+        var refreshToken = jwtSignerService.generateRefreshToken(accountCreated.username());
 
         saveAccountToken(accountCreated.id(), accessToken);
 
