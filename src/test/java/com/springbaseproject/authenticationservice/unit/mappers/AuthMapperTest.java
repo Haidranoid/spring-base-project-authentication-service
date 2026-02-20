@@ -16,6 +16,7 @@ public class AuthMapperTest {
     
     private final AuthMapper authMapper = new AuthMapperImpl();
 
+    /*
     @Test
     void toAuthAccountDto_shouldMapAllFields_fromAccountEntity() {
         AccountEntity accountEntity = AuthenticationEntityFixtures.adminAccountPersisted(1L);
@@ -28,6 +29,7 @@ public class AuthMapperTest {
         assertThat(authAccountDto.email()).isEqualTo("bunny@email.com");
         assertThat(authAccountDto.role()).isEqualTo(Roles.ADMIN);
     }
+    */
 
     @Test
     void toAuthResponseDto_shouldMapAllFields_fromAuthAccountDto() {

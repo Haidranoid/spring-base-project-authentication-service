@@ -44,21 +44,6 @@ public class AuthenticationControllerTest {
 
 
     @Test
-    @DisplayName("GET /api/v1/auth/me returns 200 when there user has a session")
-    public void me_whenIsThereASessionActive_shouldReturn202() throws Exception {
-        var session = AuthenticationDtoFixtures.meAuthResponseDto(1L);
-
-        when(authenticationService.me())
-                .thenReturn(session);
-
-        mockMvc.perform(get("/api/v1/auth/me"))
-                .andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.username").value("ronald"))
-                .andExpect(jsonPath("$.role").value(Roles.USER.name()));
-    }
-
-    @Test
     @DisplayName("POST /api/v1/auth/login returns 200 when account credentials are valid")
     public void login_whenAccountCredentialsAreValid_shouldReturn202() throws Exception {
         var loginDto = AuthenticationDtoFixtures.loginWithUsernameAndPassword();

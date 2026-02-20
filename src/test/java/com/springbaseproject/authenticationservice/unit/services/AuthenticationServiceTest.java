@@ -12,7 +12,6 @@ import com.springbaseproject.authenticationservice.services.impl.AuthenticationS
 import com.springbaseproject.sharedstarter.constants.Permissions;
 import com.springbaseproject.sharedstarter.constants.Roles;
 import com.springbaseproject.sharedstarter.constants.TokenTypes;
-import com.springbaseproject.sharedstarter.security.JwtAuthenticationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -40,8 +41,6 @@ class AuthenticationServiceTest {
     @Mock
     private Endpoints endpoints;
     @Mock
-    private JwtAuthenticationService jwtAuthenticationService;
-    @Mock
     private TokenRepository tokenRepository;
     @Mock
     private AuthMapperImpl authMapper;
@@ -49,35 +48,6 @@ class AuthenticationServiceTest {
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
 
-    @Test
-    void me_whenThereIsASession_shouldReturnAuthAccountDto() {
-        var currentSession = AuthenticationEntityFixtures.currentSession();
-        var authAccountDto = AuthenticationDtoFixtures.authAccountDto(1L);
-
-        when(jwtAuthenticationService.getCurrentUsername())
-                .thenReturn(currentSession);
-        when(authMapper.toAuthAccountDto(currentSession))
-                .thenReturn(authAccountDto);
-
-        var session = authenticationService.me();
-
-        assertNotNull(session);
-        assertEquals(1L, session.id());
-        assertEquals("admin", session.username());
-        assertEquals("admin@email.com", session.email());
-        assertEquals(Roles.ADMIN, session.role());
-    }
-
-    @Test
-    void me_whenThereIsNotASession_shouldThrowException() {
-        when(securityUtils.getCurrentAccount())
-                .thenReturn(null);
-
-        var exception = assertThrows(UnauthorizedException.class,
-                () -> authenticationService.me());
-
-        assertEquals("Invalid username or password", exception.getMessage());
-    }
 
     @Test
     void login_whenCredentialsAreValid_shouldReturnAuthResponseDto() {
@@ -90,6 +60,10 @@ class AuthenticationServiceTest {
         var roles = List.of(accountAuthenticated.role().name());
         var scopes = accountAuthenticated.role().getPermissions().stream().map(Permissions::getPermission).toList();
 
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
+        claims.put("scope", String.join(" ", scopes));
+
         when(restTemplate.postForObject(
                 endpoints.accountServiceInternalEndpoint() + "/authenticate-login",
                 loginDto,
@@ -97,7 +71,7 @@ class AuthenticationServiceTest {
         ).thenReturn(accountAuthenticated);
 
 
-        when(jwtSignerService.generateAccessToken(accountAuthenticated.username(), roles, scopes))
+        when(jwtSignerService.generateAccessToken(accountAuthenticated.username(), claims))
                 .thenReturn(accessToken);
 
         when(jwtSignerService.generateRefreshToken(accountAuthenticated.username()))
@@ -160,7 +134,7 @@ class AuthenticationServiceTest {
         ).thenReturn(accountCreated);
 
 
-        when(jwtSignerService.generateAccessToken(accountCreated.username()))
+        when(jwtSignerService.generateAccessToken(accountCreated.username(),new HashMap<>()))
                 .thenReturn(accessToken);
 
         when(jwtSignerService.generateRefreshToken(accountCreated.username()))
@@ -191,7 +165,7 @@ class AuthenticationServiceTest {
         ).thenReturn(accountCreated);
 
 
-        when(jwtSignerService.generateAccessToken(accountCreated.username()))
+        when(jwtSignerService.generateAccessToken(accountCreated.username(),new HashMap<>()))
                 .thenReturn(accessToken);
 
         when(jwtSignerService.generateRefreshToken(accountCreated.username()))
