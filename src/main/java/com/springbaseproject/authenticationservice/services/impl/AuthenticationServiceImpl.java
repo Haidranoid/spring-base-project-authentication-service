@@ -10,9 +10,9 @@ import com.springbaseproject.authenticationservice.common.properties.Endpoints;
 import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import com.springbaseproject.authenticationservice.services.AuthenticationService;
 import com.springbaseproject.sharedstarter.constants.Permissions;
-import com.springbaseproject.sharedstarter.security.JwtAuthenticationService;
 import com.springbaseproject.sharedstarter.constants.TokenTypes;
 import com.springbaseproject.sharedstarter.entities.TokenEntity;
+import com.springbaseproject.sharedstarter.utils.SessionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtSignerService jwtSignerService;
     private final RestTemplate restTemplate;
     private final Endpoints endpoints;
-    private final JwtAuthenticationService jwtAuthenticationService;
+    private final SessionUtils sessionUtils;
     private final TokenRepository tokenRepository;
     private final AuthMapperImpl authMapper;
 
