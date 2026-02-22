@@ -1,6 +1,6 @@
 package com.springbaseproject.authenticationservice.fixtures;
 
-import com.springbaseproject.sharedstarter.entities.TokenEntity;
+import com.springbaseproject.authenticationservice.common.entities.TokenEntity;
 
 public class AuthenticationEntityFixtures {
 

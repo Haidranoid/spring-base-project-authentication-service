@@ -1,6 +1,6 @@
 package com.springbaseproject.authenticationservice.repositories;
 
-import com.springbaseproject.sharedstarter.entities.TokenEntity;
+import com.springbaseproject.authenticationservice.common.entities.TokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

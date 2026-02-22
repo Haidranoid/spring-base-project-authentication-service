@@ -11,7 +11,7 @@ import com.springbaseproject.authenticationservice.repositories.TokenRepository;
 import com.springbaseproject.authenticationservice.services.impl.AuthenticationServiceImpl;
 import com.springbaseproject.sharedstarter.constants.Permissions;
 import com.springbaseproject.sharedstarter.constants.Roles;
-import com.springbaseproject.sharedstarter.constants.TokenTypes;
+import com.springbaseproject.authenticationservice.common.constants.TokenTypes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

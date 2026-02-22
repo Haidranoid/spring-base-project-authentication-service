@@ -5,8 +5,8 @@ import com.springbaseproject.authenticationservice.common.dtos.AuthResponseDto;
 import com.springbaseproject.authenticationservice.common.dtos.LoginDto;
 import com.springbaseproject.authenticationservice.common.dtos.SignupDto;
 import com.springbaseproject.sharedstarter.constants.Roles;
-import com.springbaseproject.sharedstarter.constants.TokenTypes;
-import com.springbaseproject.sharedstarter.entities.TokenEntity;
+import com.springbaseproject.authenticationservice.common.constants.TokenTypes;
+import com.springbaseproject.authenticationservice.common.entities.TokenEntity;
 
 public class AuthenticationDtoFixtures {
 
